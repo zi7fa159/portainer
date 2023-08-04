@@ -6,7 +6,8 @@ on:
       - master
       - develop
       - 'release/*'
-
+    types: [ready_for_review]
+    
 jobs:
   openapi-spec:
     runs-on: ubuntu-latest
