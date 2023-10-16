@@ -142,6 +142,54 @@ angular
       });
     }
 
+    $stateRegistryProvider.register({
+      name: 'edge.templates',
+      url: '/templates?template',
+      views: {
+        'content@': {
+          component: 'edgeAppTemplatesView',
+        },
+      },
+      data: {
+        docs: '/user/edge/templates',
+      },
+    });
+
+    $stateRegistryProvider.register({
+      name: 'edge.templates.custom',
+      url: '/custom?customTemplate',
+      views: {
+        'content@': {
+          component: 'edgeCustomTemplatesView',
+        },
+      },
+      data: {
+        docs: '/user/edge/templates/custom',
+      },
+    });
+
+    $stateRegistryProvider.register({
+      name: 'edge.templates.custom.new',
+      url: '/new?fileContent&type',
+
+      views: {
+        'content@': {
+          component: 'edgeCreateCustomTemplatesView',
+        },
+      },
+    });
+
+    $stateRegistryProvider.register({
+      name: 'edge.templates.custom.edit',
+      url: '/:id',
+
+      views: {
+        'content@': {
+          component: 'edgeEditCustomTemplatesView',
+        },
+      },
+    });
+
     $stateRegistryProvider.register(edge);
 
     $stateRegistryProvider.register(groups);
