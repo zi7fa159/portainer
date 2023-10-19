@@ -2,9 +2,7 @@ package auth
 
 import (
 	"net/http"
-	"time"
 
-	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/api/http/security"
 	"github.com/portainer/portainer/api/internal/logoutcontext"
 	httperror "github.com/portainer/portainer/pkg/libhttp/error"
@@ -33,15 +31,7 @@ func (handler *Handler) logout(w http.ResponseWriter, r *http.Request) *httperro
 		logoutcontext.Cancel(tokenData.Token)
 	}
 
-	http.SetCookie(w, &http.Cookie{
-		Name:     portainer.AuthCookieKey,
-		Value:    "",
-		Expires:  time.Unix(0, 0),
-		Path:     "/",
-		HttpOnly: true,
-		SameSite: http.SameSiteStrictMode,
-		MaxAge:   -1,
-	})
+	security.RemoveAuthCookie(w)
 
 	return response.Empty(w)
 }
