@@ -1479,7 +1479,6 @@ type (
 	// JWTService represents a service for managing JWT tokens
 	JWTService interface {
 		GenerateToken(data *TokenData) (string, time.Time, error)
-		GenerateTokenForOAuth(data *TokenData) (string, time.Time, error)
 		GenerateTokenForKubeconfig(data *TokenData) (string, error)
 		ParseAndVerifyToken(token string) (*TokenData, error)
 		SetUserSessionDuration(userSessionDuration time.Duration)
