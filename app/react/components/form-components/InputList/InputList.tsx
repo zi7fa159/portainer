@@ -67,7 +67,11 @@ interface Props<T> {
   errors?: ArrayError<T[]>;
   textTip?: string;
   isAddButtonHidden?: boolean;
+  addButtonDataCy?: string;
+  isDeleteButtonHidden?: boolean;
+  deleteButtonDataCy?: string;
   disabled?: boolean;
+  addButtonError?: string;
   readOnly?: boolean;
   'aria-label'?: string;
 }
@@ -86,11 +90,16 @@ export function InputList<T = DefaultType>({
   errors,
   textTip,
   isAddButtonHidden = false,
+  addButtonDataCy,
+  isDeleteButtonHidden = false,
+  deleteButtonDataCy,
   disabled,
+  addButtonError,
   readOnly,
   'aria-label': ariaLabel,
 }: Props<T>) {
   const isAddButtonVisible = !(isAddButtonHidden || readOnly);
+  const isDeleteButtonVisible = !(isDeleteButtonHidden || readOnly);
   return (
     <div className="form-group" aria-label={ariaLabel || label}>
       {label && (
@@ -154,12 +163,13 @@ export function InputList<T = DefaultType>({
                       />
                     </>
                   )}
-                  {!readOnly && (
+                  {isDeleteButtonVisible && (
                     <Button
                       color="dangerlight"
                       size="medium"
                       onClick={() => handleRemoveItem(key, item)}
                       className="vertical-center btn-only-icon"
+                      data-cy={`${deleteButtonDataCy}_${index}`}
                       icon={Trash2}
                     />
                   )}
@@ -171,19 +181,27 @@ export function InputList<T = DefaultType>({
       )}
 
       {isAddButtonVisible && (
-        <div className="col-sm-12 mt-3">
-          <Button
-            onClick={handleAdd}
-            disabled={disabled}
-            type="button"
-            color="default"
-            className="!ml-0"
-            size="small"
-            icon={Plus}
-          >
-            {addLabel}
-          </Button>
-        </div>
+        <>
+          <div className="col-sm-12 mt-3">
+            <Button
+              onClick={handleAdd}
+              disabled={disabled}
+              type="button"
+              color="default"
+              className="!ml-0"
+              size="small"
+              icon={Plus}
+              data-cy={addButtonDataCy}
+            >
+              {addLabel}
+            </Button>
+          </div>
+          {addButtonError && (
+            <div className="col-sm-12">
+              <FormError>{addButtonError}</FormError>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
