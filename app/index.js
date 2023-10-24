@@ -36,7 +36,6 @@ angular
     'ngResource',
     'angularUtils.directives.dirPagination',
     'LocalStorageModule',
-    'angular-jwt',
     'angular-json-tree',
     'angular-loading-bar',
     'angular-clipboard',
