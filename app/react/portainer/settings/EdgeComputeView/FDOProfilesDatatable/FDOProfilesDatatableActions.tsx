@@ -1,6 +1,6 @@
 import { useQueryClient } from 'react-query';
 import { useRouter } from '@uirouter/react';
-import { PlusCircle, Trash2 } from 'lucide-react';
+import { PlusCircle } from 'lucide-react';
 
 import { Profile } from '@/portainer/hostmanagement/fdo/model';
 import * as notifications from '@/portainer/services/notifications';
@@ -9,10 +9,10 @@ import {
   duplicateProfile,
 } from '@/portainer/hostmanagement/fdo/fdo.service';
 
-import { confirm, confirmDestructive } from '@@/modals/confirm';
+import { confirm } from '@@/modals/confirm';
 import { Link } from '@@/Link';
 import { Button } from '@@/buttons';
-import { buildConfirmButton } from '@@/modals/utils';
+import { DeleteButton } from '@@/buttons/DeleteButton';
 
 interface Props {
   isFDOEnabled: boolean;
@@ -42,14 +42,11 @@ export function FDOProfilesDatatableActions({
         Duplicate
       </Button>
 
-      <Button
-        disabled={!isFDOEnabled || selectedItems.length < 1}
-        color="danger"
-        onClick={() => onDeleteProfileClick()}
-        icon={Trash2}
-      >
-        Remove
-      </Button>
+      <DeleteButton
+        disabled={!isFDOEnabled || selectedItems.length === 0}
+        onConfirmed={() => onDeleteProfileClick()}
+        confirmMessage="This action will delete the selected profile(s). Continue?"
+      />
     </div>
   );
 
@@ -80,16 +77,6 @@ export function FDOProfilesDatatableActions({
   }
 
   async function onDeleteProfileClick() {
-    const confirmed = await confirmDestructive({
-      title: 'Are you sure?',
-      message: 'This action will delete the selected profile(s). Continue?',
-      confirmButton: buildConfirmButton('Remove', 'danger'),
-    });
-
-    if (!confirmed) {
-      return;
-    }
-
     await Promise.all(
       selectedItems.map(async (profile) => {
         try {

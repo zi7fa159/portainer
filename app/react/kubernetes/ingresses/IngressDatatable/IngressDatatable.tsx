@@ -1,4 +1,3 @@
-import { Plus, Trash2 } from 'lucide-react';
 import { useRouter } from '@uirouter/react';
 import { useMemo } from 'react';
 
@@ -10,15 +9,15 @@ import { createStore } from '@/react/kubernetes/datatables/default-kube-datatabl
 import { isSystemNamespace } from '@/react/kubernetes/namespaces/utils';
 import { SystemResourceDescription } from '@/react/kubernetes/datatables/SystemResourceDescription';
 
-import { confirmDelete } from '@@/modals/confirm';
 import { Datatable, TableSettingsMenu } from '@@/datatables';
-import { Button } from '@@/buttons';
-import { Link } from '@@/Link';
+import { AddButton } from '@@/buttons';
 import { useTableState } from '@@/datatables/useTableState';
+import { DeleteButton } from '@@/buttons/DeleteButton';
 
 import { DeleteIngressesRequest, Ingress } from '../types';
 import { useDeleteIngresses, useIngresses } from '../queries';
 import { useNamespacesQuery } from '../../namespaces/queries/useNamespacesQuery';
+import { CreateFromManifestButton } from '../../components/CreateFromManifestButton';
 
 import { columns } from './columns';
 
@@ -90,36 +89,21 @@ export function IngressDatatable() {
 
   function tableActions(selectedFlatRows: Ingress[]) {
     return (
-      <div className="ingressDatatable-actions">
+      <div className="ingressDatatable-actions flex gap-2">
         <Authorized authorizations="AzureContainerGroupDelete">
-          <Button
-            color="dangerlight"
+          <DeleteButton
             disabled={selectedFlatRows.length === 0}
-            onClick={() => handleRemoveClick(selectedFlatRows)}
-            icon={Trash2}
-          >
-            Remove
-          </Button>
+            onConfirmed={() => handleRemoveClick(selectedFlatRows)}
+            data-cy="k8sSecret-removeSecretButton"
+            confirmMessage="Are you sure you want to delete the selected ingresses?"
+          />
         </Authorized>
 
         <Authorized authorizations="K8sIngressesW">
-          <Link
-            to="kubernetes.ingresses.create"
-            className="space-left no-decoration"
-          >
-            <Button icon={Plus} color="secondary">
-              Add with form
-            </Button>
-          </Link>
-        </Authorized>
-        <Authorized authorizations="K8sIngressesW">
-          <Link
-            to="kubernetes.deploy"
-            className="space-left no-decoration"
-            params={{ referrer: 'kubernetes.ingresses' }}
-          >
-            <Button icon={Plus}>Create from manifest</Button>
-          </Link>
+          <AddButton to=".create" color="secondary">
+            Add with form
+          </AddButton>
+          <CreateFromManifestButton />
         </Authorized>
       </div>
     );
@@ -130,13 +114,6 @@ export function IngressDatatable() {
   }
 
   async function handleRemoveClick(ingresses: SelectedIngress[]) {
-    const confirmed = await confirmDelete(
-      'Are you sure you want to delete the selected ingresses?'
-    );
-    if (!confirmed) {
-      return null;
-    }
-
     const payload: DeleteIngressesRequest = {} as DeleteIngressesRequest;
     ingresses.forEach((ingress) => {
       payload[ingress.Namespace] = payload[ingress.Namespace] || [];
@@ -151,6 +128,5 @@ export function IngressDatatable() {
         },
       }
     );
-    return ingresses;
   }
 }

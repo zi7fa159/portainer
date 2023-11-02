@@ -1,4 +1,4 @@
-import { HardDrive, Plus, Trash2 } from 'lucide-react';
+import { HardDrive } from 'lucide-react';
 import { useState } from 'react';
 
 import { useEnvironmentList } from '@/react/portainer/environments/queries';
@@ -6,9 +6,9 @@ import { useGroups } from '@/react/portainer/environments/environment-groups/que
 
 import { Datatable } from '@@/datatables';
 import { createPersistedStore } from '@@/datatables/types';
-import { Button } from '@@/buttons';
-import { Link } from '@@/Link';
+import { AddButton } from '@@/buttons';
 import { useTableState } from '@@/datatables/useTableState';
+import { DeleteButton } from '@@/buttons/DeleteButton';
 
 import { isBE } from '../../feature-flags/feature-flags.service';
 import { isSortType } from '../queries/useEnvironmentList';
@@ -73,39 +73,31 @@ export function EnvironmentsDatatable({
       }
       renderTableActions={(selectedRows) => (
         <div className="flex items-center gap-2">
-          <Button
-            color="dangerlight"
+          <DeleteButton
             disabled={selectedRows.length === 0}
-            onClick={() => onRemove(selectedRows)}
-            icon={Trash2}
-            className="!m-0"
+            onConfirmed={() => onRemove(selectedRows)}
+            confirmMessage="This action will remove all configurations associated to your environment(s). Continue?"
           >
             Remove
-          </Button>
+          </DeleteButton>
 
           <ImportFdoDeviceButton />
 
           {isBE && (
-            <Button
-              as={Link}
+            <AddButton
               color="secondary"
-              icon={Plus}
-              props={{ to: 'portainer.endpoints.edgeAutoCreateScript' }}
+              to="portainer.endpoints.edgeAutoCreateScript"
             >
               Auto onboarding
-            </Button>
+            </AddButton>
           )}
-          <Link to="portainer.wizard.endpoints">
-            <Button
-              onClick={() =>
-                localStorage.setItem('wizardReferrer', 'environments')
-              }
-              icon={Plus}
-              className="!m-0"
-            >
-              Add environment
-            </Button>
-          </Link>
+
+          <AddButton
+            to="portainer.wizard.endpoints"
+            params={{ referrer: 'environments' }}
+          >
+            Add environment
+          </AddButton>
         </div>
       )}
     />

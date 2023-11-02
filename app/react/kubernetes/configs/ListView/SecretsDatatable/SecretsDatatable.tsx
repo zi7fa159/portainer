@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Lock, Plus, Trash2 } from 'lucide-react';
+import { Lock } from 'lucide-react';
 import { Secret } from 'kubernetes-types/core/v1';
 
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
@@ -12,12 +12,12 @@ import { useApplicationsForCluster } from '@/react/kubernetes/applications/appli
 import { Application } from '@/react/kubernetes/applications/types';
 import { pluralize } from '@/portainer/helpers/strings';
 import { useNamespacesQuery } from '@/react/kubernetes/namespaces/queries/useNamespacesQuery';
+import { CreateFromManifestButton } from '@/react/kubernetes/components/CreateFromManifestButton';
 
 import { Datatable, TableSettingsMenu } from '@@/datatables';
-import { confirmDelete } from '@@/modals/confirm';
-import { Button } from '@@/buttons';
-import { Link } from '@@/Link';
+import { AddButton } from '@@/buttons';
 import { useTableState } from '@@/datatables/useTableState';
+import { DeleteButton } from '@@/buttons/DeleteButton';
 
 import {
   useSecretsForCluster,
@@ -127,16 +127,6 @@ function TableActions({ selectedItems }: { selectedItems: SecretRowData[] }) {
   const deleteSecretMutation = useMutationDeleteSecrets(environmentId);
 
   async function handleRemoveClick(secrets: SecretRowData[]) {
-    const confirmed = await confirmDelete(
-      `Are you sure you want to remove the selected ${pluralize(
-        secrets.length,
-        'secret'
-      )}?`
-    );
-    if (!confirmed) {
-      return;
-    }
-
     const secretsToDelete = secrets.map((secret) => ({
       namespace: secret.metadata?.namespace ?? '',
       name: secret.metadata?.name ?? '',
@@ -147,41 +137,30 @@ function TableActions({ selectedItems }: { selectedItems: SecretRowData[] }) {
 
   return (
     <Authorized authorizations="K8sSecretsW">
-      <Button
-        className="btn-wrapper"
-        color="dangerlight"
-        disabled={selectedItems.length === 0}
-        onClick={async () => {
-          handleRemoveClick(selectedItems);
-        }}
-        icon={Trash2}
-        data-cy="k8sSecret-removeSecretButton"
-      >
-        Remove
-      </Button>
-      <Link to="kubernetes.secrets.new" className="ml-1">
-        <Button
-          className="btn-wrapper"
-          color="secondary"
-          icon={Plus}
+      <div className="flex gap-2">
+        <DeleteButton
+          disabled={selectedItems.length === 0}
+          onConfirmed={() => handleRemoveClick(selectedItems)}
+          data-cy="k8sSecret-removeSecretButton"
+          confirmMessage={`Are you sure you want to remove the selected ${pluralize(
+            selectedItems.length,
+            'secret'
+          )}?`}
+        />
+        <AddButton
+          to="kubernetes.secrets.new"
           data-cy="k8sSecret-addSecretWithFormButton"
+          color="secondary"
         >
           Add with form
-        </Button>
-      </Link>
-      <Link
-        to="kubernetes.deploy"
-        params={{
-          referrer: 'kubernetes.configurations',
-          tab: 'secrets',
-        }}
-        className="ml-1"
-        data-cy="k8sSecret-deployFromManifestButton"
-      >
-        <Button className="btn-wrapper" color="primary" icon={Plus}>
-          Create from manifest
-        </Button>
-      </Link>
+        </AddButton>
+        <CreateFromManifestButton
+          params={{
+            tab: 'secrets',
+          }}
+          data-cy="k8sSecret-deployFromManifestButton"
+        />
+      </div>
     </Authorized>
   );
 }
