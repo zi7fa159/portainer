@@ -1,4 +1,4 @@
-import { HardDrive } from 'lucide-react';
+import { HardDrive, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 import { useEnvironmentList } from '@/react/portainer/environments/queries';
@@ -6,9 +6,8 @@ import { useGroups } from '@/react/portainer/environments/environment-groups/que
 
 import { Datatable } from '@@/datatables';
 import { createPersistedStore } from '@@/datatables/types';
-import { AddButton } from '@@/buttons';
+import { AddButton, Button } from '@@/buttons';
 import { useTableState } from '@@/datatables/useTableState';
-import { DeleteButton } from '@@/buttons/DeleteButton';
 
 import { isBE } from '../../feature-flags/feature-flags.service';
 import { isSortType } from '../queries/useEnvironmentList';
@@ -73,13 +72,15 @@ export function EnvironmentsDatatable({
       }
       renderTableActions={(selectedRows) => (
         <div className="flex items-center gap-2">
-          <DeleteButton
+          <Button
+            color="dangerlight"
             disabled={selectedRows.length === 0}
-            onConfirmed={() => onRemove(selectedRows)}
-            confirmMessage="This action will remove all configurations associated to your environment(s). Continue?"
+            onClick={() => onRemove(selectedRows)}
+            icon={Trash2}
+            className="!m-0"
           >
             Remove
-          </DeleteButton>
+          </Button>
 
           <ImportFdoDeviceButton />
 

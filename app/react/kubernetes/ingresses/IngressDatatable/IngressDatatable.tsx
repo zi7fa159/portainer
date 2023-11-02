@@ -90,16 +90,14 @@ export function IngressDatatable() {
   function tableActions(selectedFlatRows: Ingress[]) {
     return (
       <div className="ingressDatatable-actions flex gap-2">
-        <Authorized authorizations="AzureContainerGroupDelete">
+        <Authorized authorizations="K8sIngressesW">
           <DeleteButton
             disabled={selectedFlatRows.length === 0}
             onConfirmed={() => handleRemoveClick(selectedFlatRows)}
             data-cy="k8sSecret-removeSecretButton"
             confirmMessage="Are you sure you want to delete the selected ingresses?"
           />
-        </Authorized>
 
-        <Authorized authorizations="K8sIngressesW">
           <AddButton to=".create" color="secondary">
             Add with form
           </AddButton>
