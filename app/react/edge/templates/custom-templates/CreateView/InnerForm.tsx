@@ -23,6 +23,7 @@ import {
 } from '@@/BoxSelector/common-options/build-methods';
 
 import { FormValues, Method, buildMethods } from './types';
+import { EdgeSettingsFieldset } from './EdgeSettingsFieldset';
 
 export function InnerForm({ isLoading }: { isLoading: boolean }) {
   const {
@@ -103,22 +104,50 @@ export function InnerForm({ isLoading }: { isLoading: boolean }) {
         />
       )}
 
-      {values.Method === git.value && (
-        <GitForm
-          value={values.Git}
-          onChange={(newValues) =>
-            setFieldValue('Git', { ...values.Git, ...newValues })
-          }
-          errors={errors.Git}
-        />
-      )}
-
       {isTemplateVariablesEnabled && (
         <CustomTemplatesVariablesDefinitionField
           value={values.Variables}
           onChange={(values) => setFieldValue('Variables', values)}
           isVariablesNamesFromParent={values.Method === editor.value}
           errors={errors.Variables}
+        />
+      )}
+
+      {values.Method === git.value && (
+        <GitForm
+          value={values.Git}
+          onChange={(newValues) =>
+            setValues((values) => ({
+              ...values,
+              Git: {
+                ...values.Git,
+                ...newValues,
+              },
+            }))
+          }
+          errors={errors.Git}
+        />
+      )}
+
+      {values.EdgeSettings && (
+        <EdgeSettingsFieldset
+          setValues={(edgeValues) =>
+            setValues((values) => ({
+              ...values,
+              EdgeSettings:
+                typeof edgeValues === 'function'
+                  ? edgeValues(values.EdgeSettings)
+                  : edgeValues,
+            }))
+          }
+          gitConfig={values.Git}
+          fileValues={{
+            fileContent: values.FileContent,
+            file: values.File,
+          }}
+          values={values.EdgeSettings}
+          errors={errors.EdgeSettings}
+          setFieldError={setFieldError}
         />
       )}
 

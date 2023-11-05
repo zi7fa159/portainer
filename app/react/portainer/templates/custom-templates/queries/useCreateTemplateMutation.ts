@@ -12,7 +12,10 @@ import {
 import { StackType } from '@/react/common/stacks/types';
 import { FormValues } from '@/react/edge/templates/custom-templates/CreateView/types';
 import { VariableDefinition } from '@/react/portainer/custom-templates/components/CustomTemplatesVariablesDefinitionField/CustomTemplatesVariablesDefinitionField';
-import { CustomTemplate } from '@/react/portainer/templates/custom-templates/types';
+import {
+  CustomTemplate,
+  EdgeTemplateSettings,
+} from '@/react/portainer/templates/custom-templates/types';
 
 import { Platform } from '../../types';
 
@@ -41,7 +44,14 @@ function createTemplate({
     case 'upload':
       return createTemplateFromFile(values);
     case 'repository':
-      return createTemplateFromGit({ ...values, ...Git });
+      return createTemplateFromGit({
+        ...values,
+        ...Git,
+        EdgeSettings: {
+          ...values.EdgeSettings,
+          ...values.EdgeSettings.RelativePathSettings,
+        },
+      });
     default:
       throw new Error('Unknown method');
   }
@@ -69,6 +79,7 @@ interface CustomTemplateFromFileContentPayload {
   Variables: VariableDefinition[];
   /** Indicates if this template is for Edge Stack. */
   EdgeTemplate?: boolean;
+  EdgeSettings?: EdgeTemplateSettings;
 }
 async function createTemplateFromText(
   values: CustomTemplateFromFileContentPayload
@@ -101,6 +112,9 @@ interface CustomTemplateFromFilePayload {
   Logo?: string;
   /** Definitions of variables in the stack file */
   Variables?: VariableDefinition[];
+  /** Indicates if this template is for Edge Stack. */
+  EdgeTemplate?: boolean;
+  EdgeSettings?: EdgeTemplateSettings;
 }
 
 async function createTemplateFromFile(values: CustomTemplateFromFilePayload) {
@@ -122,6 +136,8 @@ async function createTemplateFromFile(values: CustomTemplateFromFilePayload) {
           Logo: values.Logo,
           File: values.File,
           Variables: values.Variables,
+          EdgeTemplate: values.EdgeTemplate,
+          EdgeSettings: values.EdgeSettings,
         }),
       }
     );
@@ -167,6 +183,7 @@ interface CustomTemplateFromGitRepositoryPayload {
   IsComposeFormat?: boolean;
   /** Indicates if this template is for Edge Stack. */
   EdgeTemplate?: boolean;
+  EdgeSettings?: EdgeTemplateSettings;
 }
 async function createTemplateFromGit(
   values: CustomTemplateFromGitRepositoryPayload

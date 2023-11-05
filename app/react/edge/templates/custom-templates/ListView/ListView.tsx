@@ -8,7 +8,7 @@ import { CustomTemplatesList } from '@/react/portainer/templates/custom-template
 import { PageHeader } from '@@/PageHeader';
 import { confirmDelete } from '@@/modals/confirm';
 
-import { DeployFormWidget } from './DeployForm';
+import { DeployFormWidget } from './DeployFormWidget';
 
 export function ListView() {
   const [selectedTemplateId, setSelectedTemplateId] = useParamState(

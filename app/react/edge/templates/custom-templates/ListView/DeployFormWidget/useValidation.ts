@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { useMemo } from 'react';
-import { object, array, number, lazy } from 'yup';
+import { object, array, number, lazy, SchemaOf, string } from 'yup';
 
 import { EdgeGroup } from '@/react/edge/edge-groups/types';
 import { nameValidation } from '@/react/edge/edge-stacks/CreateView/NameField';
@@ -10,6 +10,10 @@ import { variablesFieldValidation } from '@/react/portainer/custom-templates/com
 import { EnvironmentType } from '@/react/portainer/environments/types';
 import { useEdgeGroups } from '@/react/edge/edge-groups/queries/useEdgeGroups';
 import { useEdgeStacks } from '@/react/edge/edge-stacks/queries/useEdgeStacks';
+
+import { envVarValidation } from '@@/form-components/EnvironmentVariablesFieldset';
+
+import { edgeFieldsetValidation } from '../../CreateView/EdgeSettingsFieldset.validation';
 
 import { FormValues } from './types';
 
@@ -36,7 +40,7 @@ function validation(
   edgeGroupsType: Record<EdgeGroup['Id'], Array<EnvironmentType>>,
   variableDefinitions: VariableDefinition[]
 ) {
-  return lazy((values: FormValues) => {
+  return lazy<SchemaOf<FormValues>>((values: FormValues) => {
     const types = getTypes(values.edgeGroupIds);
 
     return object({
@@ -52,6 +56,9 @@ function validation(
           (value) => _.uniq(getTypes(value)).length === 1
         ),
       variables: variablesFieldValidation(variableDefinitions),
+      additionalSettings: edgeFieldsetValidation(),
+      fileContent: string().required('Stack file is required'),
+      envVars: envVarValidation(),
     });
   });
 

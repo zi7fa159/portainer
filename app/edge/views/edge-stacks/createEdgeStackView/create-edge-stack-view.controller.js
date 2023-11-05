@@ -1,10 +1,12 @@
-import { EditorType } from '@/react/edge/edge-stacks/types';
+import { DeploymentType, EditorType } from '@/react/edge/edge-stacks/types';
 import { getValidEditorTypes } from '@/react/edge/edge-stacks/utils';
 import { STACK_NAME_VALIDATION_REGEX } from '@/react/constants';
 import { confirmWebEditorDiscard } from '@@/modals/confirm';
 import { baseEdgeStackWebhookUrl } from '@/portainer/helpers/webhookHelper';
 import { EnvironmentType } from '@/react/portainer/environments/types';
 import { isBE } from '@/react/portainer/feature-flags/feature-flags.service';
+import { toGitFormModel } from '@/react/portainer/gitops/types';
+import { StackType } from '@/react/common/stacks/types';
 
 export default class CreateEdgeStackViewController {
   /* @ngInject */
@@ -68,6 +70,21 @@ export default class CreateEdgeStackViewController {
   onChangeTemplate(template) {
     return this.$scope.$evalAsync(() => {
       this.state.selectedTemplate = template;
+
+      this.formValues = {
+        ...this.formValues,
+        DeploymentType: template.Type === StackType.Kubernetes ? DeploymentType.Kubernetes : DeploymentType.Compose,
+        ...toGitFormModel(template.GitConfig),
+        ...(template.EdgeSettings
+          ? {
+              PrePullImage: template.EdgeSettings.PrePullImage || false,
+              RetryDeploy: template.EdgeSettings.RetryDeploy || false,
+              Registries: template.EdgeSettings.PrivateRegistryId ? [template.EdgeSettings.PrivateRegistryId] : [],
+              SupportRelativePath: template.EdgeSettings.RelativePathSettings.SupportRelativePath || false,
+              FilesystemPath: template.EdgeSettings.RelativePathSettings.FilesystemPath || '',
+            }
+          : {}),
+      };
     });
   }
 

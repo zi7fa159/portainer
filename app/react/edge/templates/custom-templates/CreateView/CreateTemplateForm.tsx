@@ -5,6 +5,7 @@ import { StackType } from '@/react/common/stacks/types';
 import { notifySuccess } from '@/portainer/services/notifications';
 import { useCreateTemplateMutation } from '@/react/portainer/templates/custom-templates/queries/useCreateTemplateMutation';
 import { Platform } from '@/react/portainer/templates/types';
+import { getDefaultEdgeTemplateSettings } from '@/react/portainer/templates/custom-templates/types';
 
 import { editor } from '@@/BoxSelector/common-options/build-methods';
 
@@ -42,6 +43,7 @@ export function CreateTemplateForm() {
       RepositoryURLValid: true,
       TLSSkipVerify: false,
     },
+    EdgeSettings: getDefaultEdgeTemplateSettings(),
   };
 
   return (
