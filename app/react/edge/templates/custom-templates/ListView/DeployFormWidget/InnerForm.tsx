@@ -1,6 +1,9 @@
-import { Form, useFormikContext } from 'formik';
+import { Form, FormikErrors, useFormikContext } from 'formik';
 
-import { CustomTemplate } from '@/react/portainer/templates/custom-templates/types';
+import {
+  CustomTemplate,
+  EdgeTemplateSettings,
+} from '@/react/portainer/templates/custom-templates/types';
 import { EdgeGroupsSelector } from '@/react/edge/edge-stacks/components/EdgeGroupsSelector';
 import { CustomTemplatesVariablesField } from '@/react/portainer/custom-templates/components/CustomTemplatesVariablesField';
 import { NameField } from '@/react/edge/edge-stacks/CreateView/NameField';
@@ -8,6 +11,7 @@ import { renderTemplate } from '@/react/portainer/custom-templates/components/ut
 import { GitFormModel } from '@/react/portainer/gitops/types';
 import { StackType } from '@/react/common/stacks/types';
 import { EnvironmentType } from '@/react/portainer/environments/types';
+import { applySetStateAction } from '@/react-tools/apply-set-state-action';
 
 import { Button } from '@@/buttons';
 import { FormActions } from '@@/form-components/FormActions';
@@ -104,23 +108,25 @@ export function InnerForm({
           errors={errors.envVars}
         />
 
-        <EdgeSettingsFieldset
-          values={values.additionalSettings}
-          setValues={(newValues) =>
-            setFieldValue(
-              'additionalSettings',
-              typeof newValues === 'function'
-                ? newValues(values.additionalSettings)
-                : newValues
-            )
-          }
-          fileValues={{
-            fileContent: values.fileContent,
-          }}
-          setFieldError={setFieldError}
-          errors={errors.additionalSettings}
-          gitConfig={gitConfig}
-        />
+        {values.additionalSettings && (
+          <EdgeSettingsFieldset
+            values={values.additionalSettings}
+            setValues={(newValues) =>
+              setFieldValue(
+                'additionalSettings',
+                applySetStateAction(values.additionalSettings, newValues)
+              )
+            }
+            fileValues={{
+              fileContent: values.fileContent,
+            }}
+            setFieldError={setFieldError}
+            errors={
+              errors.additionalSettings as FormikErrors<EdgeTemplateSettings>
+            }
+            gitConfig={gitConfig}
+          />
+        )}
       </AdvancedSettings>
 
       <FormActions

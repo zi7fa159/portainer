@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { useMemo } from 'react';
-import { object, array, number, lazy, SchemaOf, string } from 'yup';
+import { object, array, number, lazy, string } from 'yup';
 
 import { EdgeGroup } from '@/react/edge/edge-groups/types';
 import { nameValidation } from '@/react/edge/edge-stacks/CreateView/NameField';
@@ -40,7 +40,7 @@ function validation(
   edgeGroupsType: Record<EdgeGroup['Id'], Array<EnvironmentType>>,
   variableDefinitions: VariableDefinition[]
 ) {
-  return lazy<SchemaOf<FormValues>>((values: FormValues) => {
+  return lazy((values: FormValues) => {
     const types = getTypes(values.edgeGroupIds);
 
     return object({

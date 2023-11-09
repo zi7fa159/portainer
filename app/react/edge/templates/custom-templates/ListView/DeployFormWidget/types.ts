@@ -9,6 +9,6 @@ export interface FormValues {
   edgeGroupIds: Array<EdgeGroup['Id']>;
   variables: VariablesFieldValue;
   fileContent: string;
-  additionalSettings: EdgeTemplateSettings;
+  additionalSettings?: EdgeTemplateSettings;
   envVars: EnvVarValues;
 }

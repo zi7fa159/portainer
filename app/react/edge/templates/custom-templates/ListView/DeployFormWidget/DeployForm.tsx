@@ -112,18 +112,18 @@ function getPayload(
     deploymentType,
     edgeGroups: values.edgeGroupIds,
     envVars: values.envVars,
-    prePullImage: values.additionalSettings.PrePullImage,
-    registries: values.additionalSettings.PrivateRegistryId
+    prePullImage: values.additionalSettings?.PrePullImage,
+    registries: values.additionalSettings?.PrivateRegistryId
       ? [values.additionalSettings.PrivateRegistryId]
       : [],
-    retryDeploy: values.additionalSettings.RetryDeploy,
+    retryDeploy: values.additionalSettings?.RetryDeploy,
   };
   if (gitConfig) {
     return {
       method: 'git',
       payload: {
         ...basePayload,
-        relativePathSettings: values.additionalSettings.RelativePathSettings,
+        relativePathSettings: values.additionalSettings?.RelativePathSettings,
         git: gitConfig,
       },
     };
