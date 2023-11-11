@@ -1,6 +1,6 @@
 FROM portainer/base
 
-COPY dist /
+COPY /dist
 
 VOLUME /data
 WORKDIR /
