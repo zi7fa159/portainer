@@ -1,7 +1,5 @@
 FROM portainer/base
 
-COPY /dist
-
 VOLUME /data
 WORKDIR /
 
